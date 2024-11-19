@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Set initial map's style configuration property</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiYnJob2xtZXMxMCIsImEiOiJzRG9nY3JrIn0.dsqKQYo38X9n5NlIhPEsGA';
+const map = new mapboxgl.Map({
+    container: 'map',
+    zoom: 12.2,
+    pitch: 0,  // Start with pitch at 0
+    bearing: -320,  // Set initial bearing
+    center: [-111.64530698874228, 40.390450249835446],  // Set target coordinates
+    style: 'mapbox://styles/brholmes10/cm3opizj8004l01sl3fkx7wtn', // Use your custom Mapbox style
+});
+
+// Set initial parameters
+let pitch = 0;
+let bearing = -320;
+const targetCoords = [-111.64530698874228, 40.390450249835446];
+let interval;
+
+// Increase pitch gradually after a delay (slower)
+function increasePitch() {
+    if (pitch < 95) {
+        pitch += 3;  // Decrease the increment for smoother pitch transition
+        map.setPitch(pitch);
+    } else {
+        clearInterval(interval);  // Stop increasing pitch
+        startOrbiting();  // Start orbiting around the target
+    }
+}
+
+// Start orbiting the target after reaching pitch 95 (slower)
+function startOrbiting() {
+    interval = setInterval(() => {
+        bearing = (bearing + 0.75) % 360;  // Decrease the bearing increment for slower orbit
+        map.setBearing(bearing);  // Update the bearing of the map
+    }, 100);  // Increase the interval to slow down the rotation
+}
+
+// Wait for 2 seconds before starting to increase pitch
+setTimeout(() => {
+    interval = setInterval(increasePitch, 100);  // Start increasing pitch after delay
+}, 2000);  // 2000ms = 2 seconds delay
+</script>
+
+</body>
+</html>
